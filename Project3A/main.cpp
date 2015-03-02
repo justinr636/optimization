@@ -56,7 +56,9 @@ int main()
       {
 		b1.initialize(fin);
 	 	b1.print();
-		//b1.printConflicts();
+		b1.printConflicts(0);
+		b1.printConflicts(1);
+		b1.printConflicts(2);
       }
    }
    catch  (indexRangeError &ex)

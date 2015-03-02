@@ -17,6 +17,7 @@ class board
       void clear();
       void initialize(ifstream &fin);
       void print();
+      void printConflicts(int);
       bool isBlank(int, int);
       ValueType getCell(int, int);
 	  void setCell(int, int, int);
@@ -120,7 +121,15 @@ bool board::isBlank(int i, int j)
 // Returns true if cell i,j is blank, and false otherwise.
 {
    if (i < 1 || i > BoardSize || j < 1 || j > BoardSize)
-      throw rangeError("bad value in setCell");
+      throw rangeError("bad value in isBlank");
+   else
+   {
+	   i--; j--;
+	   if (value[i][j] == 0)
+		   return true;
+	   else
+		   return false;
+   }
 }
 
 void board::print()
@@ -154,6 +163,49 @@ void board::print()
       cout << "---";
    cout << "-";
    cout << endl;
+}
+
+void board::printConflicts(int type)
+// Prints out all conflicts
+{
+	vector< vector<bool> > vb;
+	string strType;
+
+	switch (type) 
+	{
+		case 0:		// Row Conflicts
+		{
+			vb = rowConflicts;
+			strType = "Row";
+			break;
+		}
+		case 1:		// Column Conflicts
+		{
+			vb = colConflicts;
+			strType = "Column";
+			break;
+		}
+		case 2:		// Square Conflicts
+		{
+			vb = sqrConflicts;
+			strType = "Square";
+			break;
+		}
+	}
+	for (int i = 0; i < BoardSize; i++)
+	{
+		cout << strType << " " << i+1 << " Conflicts:" << endl;
+		for (int j = 0; j < BoardSize; j++)
+		{
+			if (vb[i][j])
+				cout << value[i][j] << ", ";
+
+			if (j == BoardSize-1)
+				cout << endl;
+		}
+	}
+
+	cout << endl << endl;
 }
 
 void board::findRowConflicts(int index)
