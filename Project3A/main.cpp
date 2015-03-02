@@ -58,10 +58,11 @@ int main()
 
 	 	b1.print();
 
-		b1.printConflicts(0);
-		b1.printConflicts(1);
-		b1.printConflicts(2);
+		b1.printConflicts(0);	// print Row Conflicts
+		b1.printConflicts(1);	// print Col Conflicts
+		b1.printConflicts(2);	// print Sqr Conflicts
 
+		// Check if board is solved
 		b1.isSolved();
       }
    }

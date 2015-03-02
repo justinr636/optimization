@@ -1,4 +1,4 @@
-﻿Build started 3/2/2015 3:12:48 PM.
+﻿Build started 3/2/2015 6:50:04 PM.
      1>Project "C:\Users\J\Documents\Visual Studio 2010\Projects\Optimization\Project3A\Project3A\Project3A.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\Project3A.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -14,7 +14,6 @@
          Debug\main.obj
          Debug\Project3A.obj
          Debug\stdafx.obj
-     1>LINK : warning LNK4067: ambiguous entry point; selected 'mainCRTStartup'
        Manifest:
          C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\Project3A.exe.embed.manifest" /manifest Debug\Project3A.exe.intermediate.manifest
          All outputs are up-to-date.
@@ -28,4 +27,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.23
+Time Elapsed 00:00:03.68

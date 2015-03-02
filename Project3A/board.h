@@ -280,12 +280,14 @@ bool board::isSolved() const
 	{
 		for (int j = 0; j < BoardSize; j++)
 		{
+			// If Cell is Empty
 			if (value[i][j] == 0)
 			{
 				cout << "The board has not been solved!" << endl << endl;
 				return false;
 			}
 
+			// If there is a conflict
 			if (!rowConflicts[i][j])
 			{
 				cout << "The board has not been solved!" << endl << endl;
