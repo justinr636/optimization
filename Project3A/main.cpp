@@ -55,10 +55,15 @@ int main()
       while (fin && fin.peek() != 'Z')
       {
 		b1.initialize(fin);
+
 	 	b1.print();
-		b1.printConflicts(0);
-		b1.printConflicts(1);
-		b1.printConflicts(2);
+
+		b1.printConflicts(0);	// print Row Conflicts
+		b1.printConflicts(1);	// print Col Conflicts
+		b1.printConflicts(2);	// print Sqr Conflicts
+
+		// Check if board is solved
+		b1.isSolved();
       }
    }
    catch  (indexRangeError &ex)
@@ -66,4 +71,7 @@ int main()
       cout << ex.what() << endl;
       exit(1);
    }
+
+   system("pause");
+   exit(0);
 }
