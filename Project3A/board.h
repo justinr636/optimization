@@ -16,20 +16,20 @@ class board
 	  // Methods
       void clear();
       void initialize(ifstream &fin);
-      void print();
-      void printConflicts(int);
-      bool isBlank(int, int);
-      ValueType getCell(int, int);
+      void print() const;
+      void printConflicts(int) const;
+      bool isBlank(int, int) const;
+      ValueType getCell(int, int) const;
 	  void setCell(int, int, int);
 
-	  void findRowConflicts(int );
-	  void findColConflicts(int );
-	  void findSqrConflicts(int );
-
+	  bool checkConflict(int, int, int);
+	  void updateCell(int, int, int);
+	  void clearCell(int, int);
+	  bool isSolved() const;
    private:
 
-      // The following matrices go from 1 to BoardSize in each
-      // dimension.  I.e. they are each (BoardSize+1) X (BoardSize+1)
+      // The following matrices go from 0 to BoardSize in each
+      // dimension.  I.e. they are each (BoardSize) X (BoardSize)
       matrix<ValueType> value;
 
 	  vector< vector<bool> > rowConflicts;
@@ -47,7 +47,19 @@ board::board(int sqSize)
 }
 
 void board::clear()
+// Clears all values (and conflicts) in Board
 {
+	for (int i = 0; i < BoardSize; i++)
+	{
+		for (int j = 0; j < BoardSize; j++)
+		{
+			value[i][j] = 0;
+
+			rowConflicts[i][j] = false;
+			colConflicts[i][j] = false;
+			sqrConflicts[i][j] = false;
+		}
+	}
 }
 
 void board::initialize(ifstream &fin)
@@ -90,7 +102,7 @@ ostream &operator<<(ostream &ostr, vector<int> &v)
    return ostr;
 }
 
-ValueType board::getCell(int i, int j)
+ValueType board::getCell(int i, int j) const
 // Returns the value stored in a cell.  Throws an exception
 // if bad values are passed.
 {
@@ -117,7 +129,7 @@ void board::setCell(int i, int j, int val)
       throw rangeError("bad value in setCell");
 }
 
-bool board::isBlank(int i, int j)
+bool board::isBlank(int i, int j) const
 // Returns true if cell i,j is blank, and false otherwise.
 {
    if (i < 1 || i > BoardSize || j < 1 || j > BoardSize)
@@ -132,7 +144,7 @@ bool board::isBlank(int i, int j)
    }
 }
 
-void board::print()
+void board::print() const
 // Prints the current board.
 {
    for (int i = 1; i <= BoardSize; i++)
@@ -165,7 +177,7 @@ void board::print()
    cout << endl;
 }
 
-void board::printConflicts(int type)
+void board::printConflicts(int type) const
 // Prints out all conflicts
 {
 	vector< vector<bool> > vb;
@@ -194,11 +206,11 @@ void board::printConflicts(int type)
 	}
 	for (int i = 0; i < BoardSize; i++)
 	{
-		cout << strType << " " << i+1 << " Conflicts:" << endl;
+		cout << strType << " " << i+1 << " Conflicts:\n\t";
 		for (int j = 0; j < BoardSize; j++)
 		{
 			if (vb[i][j])
-				cout << value[i][j] << ", ";
+				cout << j+1 << ", ";
 
 			if (j == BoardSize-1)
 				cout << endl;
@@ -208,12 +220,82 @@ void board::printConflicts(int type)
 	cout << endl << endl;
 }
 
-void board::findRowConflicts(int index)
+bool board::checkConflict(int val, int row, int col)
+// Check if there are any row, col, or sqr conflicts
+// for a given value (val) and position (row + col)
+// returns true if a conflict exists
 {
-	vector<bool> row = rowConflicts[index];
+	if (rowConflicts[row][val-1])
+		return true;
+	if (colConflicts[col][val-1])
+		return true;
+	if (sqrConflicts[squareNumber(row+1,col+1)-1][val-1])
+		return true;
 
-	for (int j = 0; j < BoardSize; j++)
+	return false;
+}
+
+void board::updateCell(int val, int row, int col)
+// Place value in cell and update conflicts
+{
+	// Check if there are existing conflicts for this value and location?
+	if (checkConflict(val, row, col))
+		return;
+
+	int oldVal = value[row][col];
+	if (oldVal != val)
 	{
-		int num = value[index][j];
+		// Remove Conflicts for previous cell value
+		if (oldVal != 0)
+		{
+			rowConflicts[row][oldVal-1] = false;
+			colConflicts[col][oldVal-1] = false;
+			sqrConflicts[squareNumber(row+1,col+1)][oldVal-1] = false;
+		}
+
+		// Add Conflicts for new cell value
+		rowConflicts[row][val-1] = true;
+		colConflicts[col][val-1] = true;
+		sqrConflicts[squareNumber(row+1,col+1)][val-1] = true;
 	}
+}
+
+void board::clearCell(int row, int col)
+// Clear value from cell
+{
+	int oldVal = value[row][col];
+	if (oldVal != 0)
+	{
+		rowConflicts[row][oldVal-1] = false;
+		colConflicts[col][oldVal-1] = false;
+		sqrConflicts[squareNumber(row+1,col+1)][oldVal-1] = false;
+	}
+
+	value[row][col] = 0;
+}
+
+bool board::isSolved() const
+{
+	for (int i = 0; i < BoardSize; i++)
+	{
+		for (int j = 0; j < BoardSize; j++)
+		{
+			if (value[i][j] == 0)
+			{
+				cout << "The board has not been solved!" << endl << endl;
+				return false;
+			}
+
+			if (!rowConflicts[i][j])
+			{
+				cout << "The board has not been solved!" << endl << endl;
+				return false;
+			}
+		}
+	}
+
+	cout << "The board has been completely solved!" << endl;
+	//print();
+
+	return true;
 }
